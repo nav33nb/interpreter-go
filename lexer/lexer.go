@@ -11,48 +11,48 @@ type Lexer struct {
 	char     byte
 }
 
+var mapTokenType = map[byte]token.TokenType{
+	//parenthesis
+	'{': token.LBRACE,
+	'}': token.RBRACE,
+	'(': token.LPAREN,
+	')': token.RPAREN,
+	'/': token.DIVIDE,
+
+	//operators
+	'=': token.ASSIGN,
+	'*': token.MULTIPLY,
+	'+': token.PLUS,
+	'-': token.MINUS,
+	',': token.COMMA,
+	';': token.SEMICOLON,
+}
+
 func (lex *Lexer) NextToken() token.Token {
 	lex.skipWhitespace()
 
 	var tok token.Token
-	switch lex.char {
-	case '=':
-		tok = newToken(token.ASSIGN, lex.char)
-	case '{':
-		tok = newToken(token.LBRACE, lex.char)
-	case '}':
-		tok = newToken(token.RBRACE, lex.char)
-	case '(':
-		tok = newToken(token.LPAREN, lex.char)
-	case ')':
-		tok = newToken(token.RPAREN, lex.char)
-	case '/':
-		tok = newToken(token.DIVIDE, lex.char)
-	case '*':
-		tok = newToken(token.MULTIPLY, lex.char)
-	case '+':
-		tok = newToken(token.PLUS, lex.char)
-	case '-':
-		tok = newToken(token.MINUS, lex.char)
-	case ',':
-		tok = newToken(token.COMMA, lex.char)
-	case ';':
-		tok = newToken(token.SEMICOLON, lex.char)
-	case 0:
-		tok.Type, tok.Literal = token.EOF, ""
-	default:
-		if isLetter(lex.char) {
-			tok.Literal = lex.readIdentifier()
-			tok.Type = lookupType(tok.Literal)
-			return tok
-		} else if isDigit(lex.char) {
-			tok.Literal = lex.readDigit()
-			tok.Type = token.INT
-			return tok
-		} else {
-			tok = newToken(token.ILLEGAL, lex.char)
+	if tt, ok := mapTokenType[lex.char]; ok {
+		tok = newToken(tt, lex.char)
+	} else {
+		switch lex.char {
+		case 0:
+			tok.Type, tok.Literal = token.EOF, ""
+		default:
+			if isLetter(lex.char) {
+				tok.Literal = lex.readIdentifier()
+				tok.Type = lookupType(tok.Literal)
+				return tok
+			} else if isDigit(lex.char) {
+				tok.Literal = lex.readDigit()
+				tok.Type = token.INT
+				return tok
+			} else {
+				tok = newToken(token.ILLEGAL, lex.char)
+			}
 		}
 	}
+
 	lex.readChar()
 	return tok
 }

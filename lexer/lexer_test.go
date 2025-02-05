@@ -14,12 +14,13 @@ type validation struct {
 }
 
 var l = &logrus.Logger{
-	Out:   os.Stderr,
-	Level: logrus.InfoLevel,
+	Out: os.Stderr,
+	// Level: logrus.InfoLevel,
+	// Level: logrus.DebugLevel,
 	Formatter: &logrus.TextFormatter{
 		// DisableColors:   true,
 		ForceColors:     true,
-		TimestampFormat: "2006-01-02 15:04:05",
+		TimestampFormat: "2006",
 		FullTimestamp:   true,
 	},
 }
@@ -74,7 +75,6 @@ let result = add(five, ten);
 	}
 
 	lex := NewLexer(input)
-	l.Infof("Running Validations")
 	for i, v := range validations {
 		tok := lex.NextToken()
 		l.Debugf("parsing token %v", tok)
