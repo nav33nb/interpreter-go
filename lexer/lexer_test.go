@@ -37,6 +37,12 @@ func TestNextToken(t *testing.T) {
 	} otherwise {
 		send no;
 	}
+
+	isYes = 10 == 10
+	isNo = 10 != 10 
+
+	5 <= 5 
+	7 >= 7
 	`
 
 	validations := []validation{
@@ -94,6 +100,24 @@ func TestNextToken(t *testing.T) {
 		{token.NO, "no"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
+
+		{token.IDENT, "isYes"},
+		{token.ASSIGN, "="},
+		{token.INT, "10"},
+		{token.EQUALITY, "=="},
+		{token.INT, "10"},
+		{token.IDENT, "isNo"},
+		{token.ASSIGN, "="},
+		{token.INT, "10"},
+		{token.NEQUALITY, "!="},
+		{token.INT, "10"},
+
+		{token.INT, "5"},
+		{token.EQ_OR_LESS, "<="},
+		{token.INT, "5"},
+		{token.INT, "7"},
+		{token.EQ_OR_MORE, ">="},
+		{token.INT, "7"},
 	}
 
 	lex := NewLexer(input)

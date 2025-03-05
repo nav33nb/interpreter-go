@@ -18,14 +18,18 @@ const (
 	INT   = "INT"
 
 	// Operators
-	ASSIGN   = "ASSIGN"
-	PLUS     = "PLUS"
-	MINUS    = "MINUS"
-	MULTIPLY = "MULTIPLY"
-	DIVIDE   = "DIVIDE"
-	NOT      = "NOT"
-	LESSTHAN = "LESSTHAN"
-	MORETHAN = "MORETHAN"
+	ASSIGN     = "ASSIGN"
+	PLUS       = "PLUS"
+	MINUS      = "MINUS"
+	MULTIPLY   = "MULTIPLY"
+	DIVIDE     = "DIVIDE"
+	NOT        = "NOT"
+	LESSTHAN   = "LESSTHAN"
+	MORETHAN   = "MORETHAN"
+	EQUALITY   = "EQUALITY"
+	NEQUALITY  = "NEQUALITY"
+	EQ_OR_LESS = "EQ_OR_LESS"
+	EQ_OR_MORE = "EQ_OR_MORE"
 
 	//Separators
 	COMMA     = "COMMA"

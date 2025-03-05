@@ -38,7 +38,18 @@ func (lex *Lexer) NextToken() token.Token {
 
 	var tok token.Token
 	if tt, ok := mapTokenType[lex.char]; ok {
-		tok = newToken(tt, lex.char)
+		switch {
+		default:
+			tok = newToken(tt, lex.char)
+		case token.ASSIGN == tt && token.ASSIGN == mapTokenType[lex.peekChar()]:
+			tok = token.Token{Type: token.EQUALITY, Literal: lex.readTwice()}
+		case token.NOT == tt && token.ASSIGN == mapTokenType[lex.peekChar()]:
+			tok = token.Token{Type: token.NEQUALITY, Literal: lex.readTwice()}
+		case token.LESSTHAN == tt && token.ASSIGN == mapTokenType[lex.peekChar()]:
+			tok = token.Token{Type: token.EQ_OR_LESS, Literal: lex.readTwice()}
+		case token.MORETHAN == tt && token.ASSIGN == mapTokenType[lex.peekChar()]:
+			tok = token.Token{Type: token.EQ_OR_MORE, Literal: lex.readTwice()}
+		}
 	} else {
 		switch lex.char {
 		case 0:
@@ -60,6 +71,13 @@ func (lex *Lexer) NextToken() token.Token {
 
 	lex.readChar()
 	return tok
+}
+
+func (lex *Lexer) readTwice() string {
+	first := lex.char
+	lex.readChar()
+	second := lex.char
+	return string(first) + string(second)
 }
 
 func (lex *Lexer) readDigit() string {
@@ -126,6 +144,13 @@ func (lex *Lexer) readChar() {
 	}
 	lex.position = lex.nextPos
 	lex.nextPos++
+}
+
+func (lex *Lexer) peekChar() byte {
+	if lex.nextPos >= len(lex.input) {
+		return 0
+	}
+	return lex.input[lex.nextPos]
 }
 
 func NewLexer(input string) *Lexer {
