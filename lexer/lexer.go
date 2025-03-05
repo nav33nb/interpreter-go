@@ -24,6 +24,11 @@ var mapTokenType = map[byte]token.TokenType{
 	'*': token.MULTIPLY,
 	'+': token.PLUS,
 	'-': token.MINUS,
+	'!': token.NOT,
+	'<': token.LESSTHAN,
+	'>': token.MORETHAN,
+
+	// separators
 	',': token.COMMA,
 	';': token.SEMICOLON,
 }
@@ -41,7 +46,7 @@ func (lex *Lexer) NextToken() token.Token {
 		default:
 			if isLetter(lex.char) {
 				tok.Literal = lex.readIdentifier()
-				tok.Type = lookupType(tok.Literal)
+				tok.Type = checkIfKeyword(tok.Literal)
 				return tok
 			} else if isDigit(lex.char) {
 				tok.Literal = lex.readDigit()
@@ -75,16 +80,23 @@ func (lex *Lexer) skipWhitespace() {
 	}
 }
 
-func lookupType(s string) token.TokenType {
+// map of known keywords
+var keywords = map[string]token.TokenType{
+	"let":       token.LET,
+	"fn":        token.FUNCTION,
+	"yes":       token.YES,
+	"no":        token.NO,
+	"when":      token.WHEN,
+	"otherwise": token.OTHERWISE,
+	"send":      token.SEND,
+}
+
+// returns whether the string is among known keywords
+func checkIfKeyword(s string) token.TokenType {
 	if toktype, ok := keywords[s]; ok {
 		return toktype
 	}
 	return token.IDENT
-}
-
-var keywords = map[string]token.TokenType{
-	"let": token.LET,
-	"fn":  token.FUNCTION,
 }
 
 func (lex *Lexer) readIdentifier() string {
@@ -100,7 +112,10 @@ func isLetter(b byte) bool {
 }
 
 func newToken(tt token.TokenType, char byte) token.Token {
-	return token.Token{Type: tt, Literal: string(char)}
+	return token.Token{
+		Type:    tt,
+		Literal: string(char),
+	}
 }
 
 func (lex *Lexer) readChar() {

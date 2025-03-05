@@ -18,11 +18,16 @@ const (
 	INT   = "INT"
 
 	// Operators
-	ASSIGN    = "ASSIGN"
-	PLUS      = "PLUS"
-	MINUS     = "MINUS"
-	MULTIPLY  = "MULTIPLY"
-	DIVIDE    = "DIVIDE"
+	ASSIGN   = "ASSIGN"
+	PLUS     = "PLUS"
+	MINUS    = "MINUS"
+	MULTIPLY = "MULTIPLY"
+	DIVIDE   = "DIVIDE"
+	NOT      = "NOT"
+	LESSTHAN = "LESSTHAN"
+	MORETHAN = "MORETHAN"
+
+	//Separators
 	COMMA     = "COMMA"
 	SEMICOLON = "SEMICOLON"
 
@@ -33,6 +38,11 @@ const (
 	RBRACE = "RBRACE"
 
 	// Keywords
-	FUNCTION = "FUNCTION"
-	LET      = "LET"
+	FUNCTION  = "FUNCTION"
+	LET       = "LET"
+	WHEN      = "WHEN"
+	OTHERWISE = "OTHERWISE"
+	YES       = "YES"
+	NO        = "NO"
+	SEND      = "SEND"
 )
