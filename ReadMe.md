@@ -12,7 +12,7 @@ Repository contains code for my implmentation of a basic tree-walk-interpreter w
 
 ## Implementation (tree-walk, bottom-up)
 - **the lexer** (Lexing done by a lexer, tokenizer, scanner. Basically identiyfing what the raw input contains and change the representation of source code from `TEXT -> TOKENS`)
-- the parser
+- **the parser** output of parser the AST is pretty abstract - no paren, semic, braces. Takes in "tokens" of the source code and returns a data structure (and whether it conforms to the standards of that data structure) hence called syntactic analysis
 - the Abstract Syntax Tree (AST)
 - the internal object system
 - the evaluator
@@ -21,3 +21,10 @@ Repository contains code for my implmentation of a basic tree-walk-interpreter w
 
 ## Lexer
 > [REPL (Read Eval Print Loop)](repl/ReadMe.md)
+
+## Parser (RD/Pratt)
+Top-Down parsing (from AST root node), Bottom-up parsing and variations REcusrive descent, early parsing, predictive parsing derieved from top down
+- "Expressions produce values, statements dont" situational but relevant here
+  - `x=5` no
+  - `return 5` no
+  - `5` yes 5
