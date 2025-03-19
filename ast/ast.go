@@ -1,27 +1,31 @@
 package ast
 
-import "monkey/token"
+import (
+	"bytes"
+	"monkey/token"
+)
 
 // Program
 // ├── Statement 1 (LetStatement)	 <------ Node#1
 // │   ├── Token: LET
 // │   ├── Name: Identifier ("x")		<-- *identifier
-// │   └── Value: Literal (5)			<-- expression
+// │   └── expression: Literal (5)			<-- expression
 // │
 // ├── Statement 2 (LetStatement)	 <------ Node#2
 // │   ├── Token: LET
 // │   ├── Name: Identifier ("y")		<-- *identifier
-// │   └── Value: Literal (6)			<-- expression
+// │   └── expression: Literal (6)			<-- expression
 // │
 // └── Statement 3 (AssignStatement) <------ Node#3
 //	   ├── Token: ASSIGN
 //	   ├── Name: Identifier ("z")		<-- *identifier
-//	   └── Value: Add					<-- expression (composite)
+//	   └── expression: Add					<-- expression (composite)
 //		   ├── Left: Identifier ("x")
 //		   └── Right: Identifier ("y")
 
 type Node interface {
 	TokenLiteral() string
+	ToString() string
 }
 
 // Program = Sequence of Statements, This will be the top-level
@@ -45,15 +49,15 @@ type Statement interface {
 //
 //	An expression can be a simple token (like a literal or identifier) or a recursive combination of expressions (like binary operations). IDEA IS, expression can recursively be other expression or end up in some identifier. Expressions like x * (y+z) have an operation node with sub-nodes (the operands).
 //
-// so identifier should implment expression, since an identifier is is just "END OF AN EXPRESSION"
+// so identifier should implement expression, since an identifier is just "END OF AN EXPRESSION"
 type Expression interface {
 	Node
 	expressionNode() // dummy method
 }
 
-// Identifiers = Tokens, THE LEFT SIDE
-//
-// identifier should implment expression, since an identifier is is just "KIND/END OF AN EXPRESSION"
+// Identifier
+// Tokens, THE LEFT SIDE
+// identifier should implement expression, since an identifier is just "KIND/END OF AN EXPRESSION"
 type Identifier struct {
 	Token token.Token
 	Value string
@@ -63,8 +67,11 @@ func (id *Identifier) expressionNode() {}
 func (id *Identifier) TokenLiteral() string {
 	return id.Token.Literal
 }
+func (id *Identifier) ToString() string {
+	return id.Value
+}
 
-// LET STATEMENT: Structural represenation of let statement
+// LetStatement Structural representation of let statement
 // Since statement=node, it must implement node methods
 type LetStatement struct {
 	Token token.Token // LET
@@ -74,6 +81,54 @@ type LetStatement struct {
 
 func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
+func (ls *LetStatement) ToString() string {
+	var out bytes.Buffer
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.ToString())
+	out.WriteString(" = ")
+	if ls.Value != nil {
+		out.WriteString(ls.Name.Value)
+	}
+	out.WriteString(";")
+	return out.String()
+}
+
+// SendStatement Structural representation of send statement
+// Since statement=node, it must implement node methods
+type SendStatement struct {
+	Token token.Token // SEND
+	Value Expression  // 5
+}
+
+func (ss *SendStatement) statementNode()       {}
+func (ss *SendStatement) TokenLiteral() string { return ss.Token.Literal }
+func (ss *SendStatement) ToString() string {
+	var out bytes.Buffer
+	out.WriteString(ss.TokenLiteral() + " ")
+	if ss.Value != nil {
+		out.WriteString(ss.Value.ToString())
+	}
+	out.WriteString(";")
+	return out.String()
+}
+
+// ExpressionStatement these are the statements without any LEFT, entire statement is an expression
+type ExpressionStatement struct {
+	Token      token.Token // first token in the expression, like 55*10 has 55
+	expression Expression  // 5
+}
+
+func (es *ExpressionStatement) statementNode()       {}
+func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
+func (es *ExpressionStatement) ToString() string {
+	var out bytes.Buffer
+	out.WriteString(es.TokenLiteral() + " ")
+	if es.expression != nil {
+		out.WriteString(es.expression.ToString())
+	}
+	out.WriteString(";")
+	return out.String()
+}
 
 // func (p *Program) TokenLiteral() string {
 // 	if len(p.Statements) > 0 {

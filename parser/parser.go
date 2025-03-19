@@ -18,15 +18,34 @@ func (p *Parser) parseStatement() (ast.Statement, error) {
 	switch p.curToken.Type {
 	case token.LET: // let [HERE] x = 5
 		return p.parseLetStatement()
+	case token.SEND: // let [HERE] x = 5
+		return p.parseSendStatement()
 	default:
 		return nil, nil
 	}
 }
 
+func (p *Parser) parseSendStatement() (*ast.SendStatement, error) {
+	// at this point we know statemetn is "SEND *****", curToken is on SEND
+	// start making SEND statment
+	send := &ast.SendStatement{Token: p.curToken}
+
+	//todo))  expression code here
+
+	// fixme)) below skips expressions
+	for p.curToken.Type != token.SEMICOLON {
+		p.NextToken()
+	}
+	// fixme))
+
+	return send, nil
+}
+
 func (p *Parser) parseLetStatement() (*ast.LetStatement, error) {
-	// at this point we know statemetn is "LET *****" nothing beyond LET
-	// start making let statment
+	// start making let statement
+	// at this point we know statement is "LET *****" nothing beyond LET
 	let := &ast.LetStatement{Token: p.curToken}
+
 	// first after "let" should be identifier, fail otherwise
 	if ok, err := p.peekTokenTypeIs(token.IDENT); !ok {
 		fmt.Println("ok,err", ok, err)
@@ -34,7 +53,7 @@ func (p *Parser) parseLetStatement() (*ast.LetStatement, error) {
 	}
 	let.Name = &ast.Identifier{
 		Token: p.curToken,
-		Value: p.curToken.Literal,
+		Value: p.peekToken.Literal,
 	}
 	p.NextToken()
 
