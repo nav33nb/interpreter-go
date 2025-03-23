@@ -82,12 +82,13 @@ type LetStatement struct {
 func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *LetStatement) ToString() string {
+	//fmt.Println(ls, ls.Name, ls.Value)
 	var out bytes.Buffer
 	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.ToString())
 	out.WriteString(" = ")
 	if ls.Value != nil {
-		out.WriteString(ls.Name.Value)
+		out.WriteString(ls.Value.ToString())
 	}
 	out.WriteString(";")
 	return out.String()
@@ -113,9 +114,15 @@ func (ss *SendStatement) ToString() string {
 }
 
 // ExpressionStatement these are the statements without any LEFT, entire statement is an expression
+// ExpressionStatement is like a wrapper, which contains only single expression
 type ExpressionStatement struct {
 	Token      token.Token // first token in the expression, like 55*10 has 55
-	expression Expression  // 5
+	Expression Expression  // 5
+}
+
+func (es *ExpressionStatement) expressionNode() {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (es *ExpressionStatement) statementNode()       {}
@@ -123,12 +130,22 @@ func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 func (es *ExpressionStatement) ToString() string {
 	var out bytes.Buffer
 	out.WriteString(es.TokenLiteral() + " ")
-	if es.expression != nil {
-		out.WriteString(es.expression.ToString())
+	if es.Expression != nil {
+		out.WriteString(es.Expression.ToString())
 	}
 	out.WriteString(";")
 	return out.String()
 }
+
+// IntegerLiteral Literal representation of integers
+type IntegerLiteral struct {
+	Token token.Token // token
+	Value int         // integer value
+}
+
+func (il *IntegerLiteral) expressionNode()      {}
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+func (il *IntegerLiteral) ToString() string     { return il.Token.Literal }
 
 // func (p *Program) TokenLiteral() string {
 // 	if len(p.Statements) > 0 {
@@ -137,3 +154,30 @@ func (es *ExpressionStatement) ToString() string {
 // 		return ""
 // 	}
 // }
+
+func (p *Program) ToString() string {
+	var out bytes.Buffer
+
+	for _, s := range p.Statements {
+		out.WriteString(s.ToString())
+	}
+
+	return out.String()
+}
+
+type PrefixExpression struct {
+	Token    token.Token
+	Operator string
+	Right    Expression
+}
+
+func (pe *PrefixExpression) expressionNode()      {}
+func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
+func (pe *PrefixExpression) ToString() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.ToString())
+	out.WriteString(")")
+	return out.String()
+}
